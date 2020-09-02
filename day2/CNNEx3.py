@@ -8,39 +8,26 @@ print(x_train.shape, y_train.shape)
 x_train = x_train.reshape(-1, 28, 28, 1)
 x_test = x_test.reshape(-1, 28, 28, 1)
 
-'''
-plt.figure(figsize=(10,10))
-for c in range(16):
-    plt.subplot(4,4, c+1)
-    plt.imshow(x_train[c].reshape(28, 28), cmap='gray')
-
-#plt.show()
-
-
-
-0:티셔츠
-1:바지
-2:스웨터
-3:드레스
-4:코트
-5:샌들
-6:셔츠
-7:운동화
-8:가방
-9:부츠
-'''
-from tensorflow.keras.layers import Dense, Flatten, Conv2D
+from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPool2D, Dropout
 
 x_train = x_train / 255.
 x_test = x_test / 255.
 
 model = tf.keras.Sequential([
     Conv2D(input_shape=(28, 28, 1),
-           kernel_size=(3,3), filters=16, padding='same', activation='relu'),
-    Conv2D(kernel_size=(3,3), filters=32, padding='same', activation='relu'),
+           kernel_size=(3,3), filters=32, padding='same', activation='relu'),
     Conv2D(kernel_size=(3,3), filters=64, padding='same', activation='relu'),
+    MaxPool2D(strides=(2,2)),
+    Dropout(rate=0.5),
+    Conv2D(kernel_size=(3,3), filters=128,  padding='same', activation='relu'),
+    Conv2D(kernel_size=(3,3), filters=256,  padding='valid', activation='relu'),
+    MaxPool2D(strides=(2,2)),
+    Dropout(rate=0.5),
     Flatten(),
-    Dense(units=128, activation='relu'),
+    Dense(units=512, activation='relu'),
+    Dropout(rate=0.5),
+    Dense(units=256, activation='relu'),
+    Dropout(rate=0.5),
     Dense(10, activation='softmax')
 ])
 
@@ -49,6 +36,7 @@ model.compile(loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
 model.summary()
+
 
 result = model.fit(x_train, y_train, epochs=25, validation_split=0.25, batch_size=100)
 print(model.evaluate(x_test, y_test))
@@ -67,4 +55,5 @@ plt.xlabel('epoch')
 plt.ylim(0.7, 1)
 plt.legend()
 plt.show()
+
 
