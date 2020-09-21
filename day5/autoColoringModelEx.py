@@ -7,7 +7,7 @@ import math
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
-data_path = './img/colorize'
+data_path = '../datasets/img_segmentation/colorize'
 data_lists = glob.glob(os.path.join(data_path, '*.jpg'))
 print(data_lists)
 val_n_sample = math.floor(len(data_lists)*0.1)
